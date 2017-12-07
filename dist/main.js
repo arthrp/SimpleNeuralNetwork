@@ -1,32 +1,10 @@
+///<reference path="neuron.ts" />
 class SigmoidHelper {
     static output(x) {
         return 1.0 / (1.0 + Math.exp(-x));
     }
     static derivative(x) {
         return x * (1 - x);
-    }
-}
-class Neuron {
-    constructor() {
-        this.inputs = [0, 0];
-        this.weights = [0, 0];
-        this.error = 0;
-        this.bias = Math.random();
-    }
-    get output() {
-        return SigmoidHelper.output(this.weights[0] * this.inputs[0] +
-            this.weights[1] * this.inputs[1] +
-            this.bias);
-    }
-    randomizeWeights() {
-        this.weights[0] = Math.random();
-        this.weights[1] = Math.random();
-        this.bias = Math.random();
-    }
-    adjustWeights() {
-        this.weights[0] += this.error * this.inputs[0];
-        this.weights[1] += this.error * this.inputs[1];
-        this.bias += this.error;
     }
 }
 class Network {
@@ -37,7 +15,7 @@ class Network {
     }
     train(inputs, results) {
         const hiddenNeurons = this._hiddenNeurons;
-        let outputNeuron = this._outputNeuron;
+        const outputNeuron = this._outputNeuron;
         for (let epoch = 0; epoch < this._epochs; epoch++) {
             for (let i = 0; i < inputs.length; i++) {
                 let inputOne = inputs[i][0];
@@ -45,7 +23,6 @@ class Network {
                 hiddenNeurons[0].inputs = [inputOne, inputTwo];
                 hiddenNeurons[1].inputs = [inputOne, inputTwo];
                 outputNeuron.inputs = [hiddenNeurons[0].output, hiddenNeurons[1].output];
-                console.log(`${inputOne} xor ${inputTwo} = ${outputNeuron.output}`);
                 outputNeuron.error = SigmoidHelper.derivative(outputNeuron.output) * (results[i] - outputNeuron.output);
                 outputNeuron.adjustWeights();
                 hiddenNeurons[0].error = SigmoidHelper.derivative(hiddenNeurons[0].output) * outputNeuron.error * outputNeuron.weights[0];
@@ -55,6 +32,12 @@ class Network {
             }
         }
     }
+    getResult(inputs) {
+        this._hiddenNeurons[0].inputs = [inputs[0], inputs[1]];
+        this._hiddenNeurons[1].inputs = [inputs[0], inputs[1]];
+        this._outputNeuron.inputs = [this._hiddenNeurons[0].output, this._hiddenNeurons[1].output];
+        console.log(`${inputs[0]} xor ${inputs[1]} = ${this._outputNeuron.output}`);
+    }
 }
 const xorInputs = [
     [0, 0],
@@ -63,5 +46,7 @@ const xorInputs = [
     [1, 1]
 ];
 const xorResults = [0, 1, 1, 0]; //Results for each input, mapped by indices
-new Network().train(xorInputs, xorResults);
+const network = new Network();
+network.train(xorInputs, xorResults);
+network.getResult([0, 0]);
 //# sourceMappingURL=main.js.map
