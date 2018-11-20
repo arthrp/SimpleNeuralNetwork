@@ -1,7 +1,10 @@
 ///<reference path="neuron.ts" />
 
+const EPOCHS = 100000;
+
 class Network {
-    private readonly _epochs = 10000;
+    constructor(private readonly _epochs: number) {}
+
     private readonly _hiddenNeurons : Neuron[] = [new Neuron(), new Neuron()];
     private readonly _outputNeuron : Neuron = new Neuron();
 
@@ -9,7 +12,7 @@ class Network {
         const hiddenNeurons = this._hiddenNeurons;
         const outputNeuron = this._outputNeuron;
 
-        for(let epoch = 0; epoch<this._epochs; epoch++){
+        for(let epoch = 0; epoch < this._epochs; epoch++){
             for (let i = 0; i < inputs.length; i++)
             {
                 let inputOne = inputs[i][0];
@@ -49,9 +52,20 @@ const xorInputs = [
 
 const xorResults = [0,1,1,0]; //Results for each input, mapped by indices
 
-const network = new Network();
+const network = new Network(EPOCHS);
+console.log('Starting training...');
 network.train(xorInputs, xorResults);
+console.log(`Finished after ${EPOCHS} epochs`);
+
 const result = network.getResult([0,1]);
 
 document.querySelector("#results").innerHTML = result;
 console.log(result);
+
+document.querySelector("#calculate").addEventListener("click", () => {
+    const first = (<any>(document.querySelector("#one"))).value;
+    const second = (<any>(document.querySelector("#two"))).value;
+
+    const tmp = network.getResult([first,second]);
+    document.querySelector("#results").innerHTML = tmp;
+});
