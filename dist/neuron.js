@@ -21,4 +21,3 @@ class Neuron {
         this.bias += this.error;
     }
 }
-//# sourceMappingURL=neuron.js.map

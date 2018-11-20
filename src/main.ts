@@ -1,15 +1,5 @@
 ///<reference path="neuron.ts" />
 
-class SigmoidHelper {
-    public static output(x: number): number {
-        return 1.0 / (1.0 + Math.exp(-x));
-    }
-
-    public static derivative(x: number): number {
-        return x * (1 - x);
-    }
-}
-
 class Network {
     private readonly _epochs = 10000;
     private readonly _hiddenNeurons : Neuron[] = [new Neuron(), new Neuron()];
@@ -40,13 +30,13 @@ class Network {
         }
     }
 
-    public getResult(inputs): void {
+    public getResult(inputs): string {
         this._hiddenNeurons[0].inputs = [inputs[0], inputs[1]];
         this._hiddenNeurons[1].inputs = [inputs[0], inputs[1]];
 
         this._outputNeuron.inputs = [this._hiddenNeurons[0].output, this._hiddenNeurons[1].output];
 
-        console.log(`${inputs[0]} xor ${inputs[1]} = ${this._outputNeuron.output}`);
+        return `${inputs[0]} xor ${inputs[1]} = ${this._outputNeuron.output}`;
     }
 }
 
@@ -61,4 +51,7 @@ const xorResults = [0,1,1,0]; //Results for each input, mapped by indices
 
 const network = new Network();
 network.train(xorInputs, xorResults);
-network.getResult([0,0]);
+const result = network.getResult([0,1]);
+
+document.querySelector("#results").innerHTML = result;
+console.log(result);
