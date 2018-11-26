@@ -8,7 +8,7 @@ class Network {
     private readonly _hiddenNeurons : Neuron[] = [new Neuron(), new Neuron()];
     private readonly _outputNeuron : Neuron = new Neuron();
 
-    public train(inputs, results): void {
+    public train(inputs: number[][], results: number[]): void {
         const hiddenNeurons = this._hiddenNeurons;
         const outputNeuron = this._outputNeuron;
 
@@ -19,7 +19,7 @@ class Network {
                 let inputTwo = inputs[i][1];
                 hiddenNeurons[0].inputs = [inputOne, inputTwo];
                 hiddenNeurons[1].inputs = [inputOne, inputTwo];
-                
+
                 outputNeuron.inputs = [hiddenNeurons[0].output, hiddenNeurons[1].output];
 
                 outputNeuron.error = SigmoidHelper.derivative(outputNeuron.output) * (results[i] - outputNeuron.output);
@@ -29,7 +29,7 @@ class Network {
 
                 hiddenNeurons[0].adjustWeights();
                 hiddenNeurons[1].adjustWeights();
-            }            
+            }
         }
     }
 
@@ -38,8 +38,10 @@ class Network {
         this._hiddenNeurons[1].inputs = [inputs[0], inputs[1]];
 
         this._outputNeuron.inputs = [this._hiddenNeurons[0].output, this._hiddenNeurons[1].output];
+        const result = this._outputNeuron.output;
+        const rounded = Math.round(result);
 
-        return `${inputs[0]} xor ${inputs[1]} = ${this._outputNeuron.output}`;
+        return `${inputs[0]} xor ${inputs[1]} = ${rounded} (${result})`;
     }
 }
 
@@ -55,9 +57,9 @@ const xorResults = [0,1,1,0]; //Results for each input, mapped by indices
 const network = new Network(EPOCHS);
 console.log('Starting training...');
 network.train(xorInputs, xorResults);
-console.log(`Finished after ${EPOCHS} epochs`);
+console.log(`Finished after ${EPOCHS} iterations`);
 
-const result = network.getResult([0,1]);
+const result = network.getResult([0,0]);
 
 document.querySelector("#results").innerHTML = result;
 console.log(result);

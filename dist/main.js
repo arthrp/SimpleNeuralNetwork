@@ -29,7 +29,9 @@ class Network {
         this._hiddenNeurons[0].inputs = [inputs[0], inputs[1]];
         this._hiddenNeurons[1].inputs = [inputs[0], inputs[1]];
         this._outputNeuron.inputs = [this._hiddenNeurons[0].output, this._hiddenNeurons[1].output];
-        return `${inputs[0]} xor ${inputs[1]} = ${this._outputNeuron.output}`;
+        const result = this._outputNeuron.output;
+        const rounded = Math.round(result);
+        return `${inputs[0]} xor ${inputs[1]} = ${rounded} (${result})`;
     }
 }
 const xorInputs = [
@@ -42,8 +44,8 @@ const xorResults = [0, 1, 1, 0]; //Results for each input, mapped by indices
 const network = new Network(EPOCHS);
 console.log('Starting training...');
 network.train(xorInputs, xorResults);
-console.log(`Finished after ${EPOCHS} epochs`);
-const result = network.getResult([0, 1]);
+console.log(`Finished after ${EPOCHS} iterations`);
+const result = network.getResult([0, 0]);
 document.querySelector("#results").innerHTML = result;
 console.log(result);
 document.querySelector("#calculate").addEventListener("click", () => {
